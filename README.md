@@ -4,7 +4,6 @@
 ![Platform](https://img.shields.io/badge/Platform-TryHackMe-red?style=flat)
 ![Platform](https://img.shields.io/badge/Platform-HackTheBox-red?style=flat)
 ![Platform](https://img.shields.io/badge/Platform-picoCTF-red?style=flat)
-![Focus](https://img.shields.io/badge/Focus-Offensive%20Security-black?style=flat)
 
 A collection of my CTF and lab writeups that capture my journey through offensive security challenges. Each one walks through the full process, from reconnaissance to privilege escalation, with an emphasis on how I think and approach problems.
 
@@ -34,10 +33,4 @@ A collection of my CTF and lab writeups that capture my journey through offensiv
 
 <br>
 
-## Disclaimer
-
-All writeups in this repository are based on legal, authorized lab environments and bug bounty/VDP programs. The techniques documented here are strictly for educational purposes.
-
----
-
-*More writeups coming soon.*
+> *More writeups coming soon.*

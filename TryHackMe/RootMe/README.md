@@ -96,10 +96,6 @@ find / -name user.txt 2>/dev/null
 
 It came back at `/var/www/user.txt`. I read the file and got the first flag.
 
-```bash
-cat /var/www/user.txt
-```
-
 <p align="center">
   <img src="assets/images/user-flag.png" width="450">
 </p>

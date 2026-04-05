@@ -18,7 +18,7 @@ A collection of my CTF and lab writeups that capture my journey through offensiv
 
 | Room | Difficulty | Topics | Writeup |
 |------|------------|--------|---------|
-| RootMe | 🟢 Easy | `Nmap` `Gobuster` `File Upload Bypass` `Reverse Shell` `SUID Exploitation` | [Read →](tryhackme/rootme/README.md) |
+| RootMe | 🟢 Easy | `Nmap` `Gobuster` `File Upload Bypass` `Reverse Shell` `SUID Exploitation` | [Read →](TryHackMe/RootMe/README.md) |
 
 ### [Hack The Box](https://hackthebox.com)
 

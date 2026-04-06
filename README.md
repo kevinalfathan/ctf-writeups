@@ -1,6 +1,5 @@
 # CTF Writeups
-
-![Writeups](https://img.shields.io/badge/Writeups-1-blue?style=flat)
+![Writeups](https://img.shields.io/badge/Writeups-2-blue?style=flat)
 ![Platform](https://img.shields.io/badge/Platform-TryHackMe-red?style=flat)
 ![Platform](https://img.shields.io/badge/Platform-HackTheBox-red?style=flat)
 ![Platform](https://img.shields.io/badge/Platform-picoCTF-red?style=flat)
@@ -14,22 +13,18 @@ A collection of my CTF and lab writeups that capture my journey through offensiv
 ## Table of Contents
 
 ### [TryHackMe](https://tryhackme.com)
-
 | Room | Difficulty | Topics | Writeup |
 |------|------------|--------|---------|
 | RootMe | 🟢 Easy | `Nmap` `Gobuster` `File Upload Bypass` `Reverse Shell` `SUID Exploitation` | [Read →](TryHackMe/RootMe/README.md) |
 
 ### [Hack The Box](https://hackthebox.com)
-
 | Room | Difficulty | Topics | Writeup |
-|------|------------|--------|---------|
 |------|------------|--------|---------|
 
 ### [picoCTF](https://picoctf.org)
-
-| Room | Difficulty | Topics | Writeup |
-|------|------------|--------|---------|
-|------|------------|--------|---------|
+| Challenge | Difficulty | Topics | Writeup |
+|-----------|------------|--------|---------|
+| No FA | 🟡 Medium | `Hash Cracking` `John the Ripper` `Flask Session` `2FA Bypass` | [Read →](PicoCTF/NoFA/README.md) |
 
 <br>
 

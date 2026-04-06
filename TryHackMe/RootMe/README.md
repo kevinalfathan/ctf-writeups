@@ -45,7 +45,7 @@ Two directories showed up: `/panel` and `/uploads`. I went to `/panel` first to 
   <img src="assets/images/03-upload-panel.png" width="500">
 </p>
 
-At that point I checked the room's hints, it says **"file upload bypass"** and **"PHP reverse shell"**. That confirmed what I was already suspecting, the upload form was filtering extensions, and the goal was to bypass it with something that could give me remote code execution. I grabbed a PHP reverse shell from `/usr/share/webshells/php/php-reverse-shell.php`. The script used GET parameters for the IP and port, so I could pass my machine's address and port directly when executing it.
+At that point I checked the room's hints, it says **"file upload bypass"** and **"PHP reverse shell"**. That confirmed the upload form was filtering extensions, and the goal was to bypass it with something that could give me remote code execution. I grabbed a PHP reverse shell from `/usr/share/webshells/php/php-reverse-shell.php`. The script used GET parameters for the IP and port, so I could pass my machine's address and port directly when executing it.
 
 <p align="center">
   <img src="assets/images/04-shell-file.png" width="500">

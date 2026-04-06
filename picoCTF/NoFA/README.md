@@ -9,7 +9,11 @@
 | **Objective** | Crack leaked password hashes and bypass 2FA to log in as admin |
 | **Tools Used** | John the Ripper · SQLite3 · Browser DevTools |
 
----
+<br>
+
+<p align="center">
+  <img src="assets/images/00-challenge.png" width="750">
+</p>
 
 ## Reconnaissance
 
@@ -27,7 +31,7 @@ sqlite3 users.db "SELECT * FROM users;"
 
 The table came back with 20 rows. Each row had an `id`, `username`, `email`, `password`, and a `two_fa` column. The passwords were stored as hashes, not plaintext. The `two_fa` column was `0` for most users, but `admin` had it set to `1`, which immediately told me the admin account was going to be harder to get into.
 
----
+<br>
 
 ## Exploitation
 
@@ -53,20 +57,18 @@ john --format=raw-sha256 --wordlist=/usr/share/wordlists/rockyou.txt dataleak.tx
   <img src="assets/images/03-john-cracked.png" width="750">
 </p>
 
-John cracked two accounts almost instantly:
+John cracked two accounts:
 
 - `john.doe` -> `apple123`
 - `admin` -> `apple@123`
 
 ### Step 2: Testing with a regular account
 
-I logged in as `john.doe` first to verify the credentials worked.
-
 <p align="center">
   <img src="assets/images/04-login-page.png" width="750">
 </p>
 
-The login went through but the page just said *"No flag for you!!"*, which made sense since the flag is only shown to the admin account based on the source code:
+I logged in as `john.doe` first to verify the credentials worked. The login went through but the page just said *"No flag for you!!"*, which made sense since the flag is only shown to the admin account based on the source code:
 
 <p align="center">
   <img src="assets/images/05-login-johndoe.png" width="750">
@@ -110,20 +112,13 @@ I decoded it using a Flask session cookie decoder online.
   <img src="assets/images/08-flask-decoder.png" width="750">
 </p>
 
-The decoded session revealed:
+The decoded session revealed. I entered it into the verification form and logged in as admin. The flag appeared on the home page.
 
-```json
-{
-    "logged": "false",
-    "otp_secret": "7303",
-    "otp_timestamp": 1774334827.957,
-    "username": "admin"
-}
-```
+<p align="center">
+  <img src="assets/images/09-flag.png" width="750">
+</p>
 
-The OTP was right there: `7303`. I entered it into the verification form and logged in as admin. The flag appeared on the home page.
-
----
+<br>
 
 ## Findings & Recommendations
 
@@ -163,7 +158,7 @@ import secrets
 otp = str(secrets.randbelow(900000) + 100000)  # 6-digit OTP
 ```
 
----
+<br>
 
 ## Lessons Learned
 

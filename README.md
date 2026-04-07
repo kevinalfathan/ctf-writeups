@@ -24,7 +24,7 @@ A collection of my CTF and lab writeups that capture my journey through offensiv
 ### [picoCTF](https://picoctf.org)
 | Challenge | Difficulty | Topics | Writeup |
 |-----------|------------|--------|---------|
-| No FA | 🟡 Medium | `Hash Cracking` `John the Ripper` `Flask Session` `2FA Bypass` | [Read →](PicoCTF/NoFA/README.md) |
+| No FA | 🟡 Medium | `Hash Cracking` `John the Ripper` `Flask Session` `2FA Bypass` | [Read →](picoCTF/NoFA/README.md) |
 
 <br>
 
